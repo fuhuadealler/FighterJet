@@ -1,0 +1,248 @@
+:root {
+  color-scheme: dark;
+  font-family: "Courier New", Courier, monospace;
+  background: #05070a;
+  color: #f2f2f2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 30%, #101923 0%, #05070a 55%, #020304 100%);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.game-shell {
+  position: relative;
+  width: min(
+    calc(100vw - 16px),
+    calc((100dvh - 16px) * 9 / 16)
+  );
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: #0b0f14;
+  border: 2px solid #1c2733;
+  box-shadow:
+    0 0 0 4px #05070a,
+    0 24px 80px rgba(0, 0, 0, 0.72);
+  touch-action: none;
+}
+
+.game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.hud {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: clamp(10px, 2.7vw, 13px);
+  letter-spacing: 1px;
+  pointer-events: none;
+  text-shadow: 0 2px 0 #000;
+}
+
+.lives {
+  color: #ff5252;
+  letter-spacing: 3px;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(5, 7, 10, 0.82);
+}
+
+.overlay-clear {
+  background: rgba(5, 7, 10, 0.35);
+}
+
+.overlay h1 {
+  margin: 0;
+  font-size: clamp(22px, 6.5vw, 36px);
+  letter-spacing: 3px;
+  text-shadow: 0 3px 0 #000;
+}
+
+.overlay p {
+  margin: 0;
+  max-width: 260px;
+  font-size: clamp(11px, 3vw, 14px);
+  line-height: 1.6;
+  color: #b7c4cf;
+}
+
+.overlay .tagline {
+  margin-top: 8px;
+  color: #ffd54f;
+  letter-spacing: 1px;
+}
+
+.big {
+  font-size: clamp(54px, 18vw, 96px);
+  line-height: 1;
+  color: #ffd54f;
+  text-shadow: 0 4px 0 #000;
+}
+
+.score-final {
+  color: #f2f2f2 !important;
+  font-size: clamp(16px, 4.5vw, 22px) !important;
+  letter-spacing: 2px;
+}
+
+.muted {
+  color: #70808f !important;
+}
+
+.player-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border: 1px solid currentColor;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.badge.p1 {
+  color: #f2f2f2;
+}
+
+.badge.p2 {
+  color: #4dd0e1;
+}
+
+.badge.offline {
+  opacity: 0.45;
+}
+
+.badge.me {
+  box-shadow: 0 0 0 2px currentColor inset;
+}
+
+.top-scores {
+  width: 100%;
+  max-width: 230px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px dashed #263241;
+  border-bottom: 1px dashed #263241;
+  font-size: 12px;
+  color: #d8e1e8;
+}
+
+.top-scores li {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 2px;
+  border-bottom: 1px dashed #1a2430;
+}
+
+.top-scores li:last-child {
+  border-bottom: 0;
+}
+
+.button {
+  appearance: none;
+  border: 0;
+  padding: 10px 18px;
+  background: #f2f2f2;
+  color: #0b0f14;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #7d8b99;
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+
+.button:hover:not(:disabled) {
+  background: #ffd54f;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #7d8b99;
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.hint {
+  position: absolute;
+  inset: auto 0 8px;
+  margin: 0;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #70808f;
+  pointer-events: none;
+}
+
+.touch-hint {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .desktop-hint {
+    display: none;
+  }
+
+  .touch-hint {
+    display: inline;
+  }
+}
+
+@media (max-width: 420px) {
+  .app {
+    padding: 0;
+  }
+
+  .game-shell {
+    width: min(100vw, calc(100dvh * 9 / 16));
+    border-left: 0;
+    border-right: 0;
+  }
+}
