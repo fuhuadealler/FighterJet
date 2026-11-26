@@ -1,106 +1,108 @@
 # FighterJet
 
-> 是兄弟，就一起打飞机！
+English | [简体中文](README.zh-CN.md)
 
-FighterJet 是一个浏览器端、竖屏 9:16 的在线双人飞机射击游戏。两名玩家各自在自己的电脑或手机上控制一架飞机，进入同一个权威服务器维护的对局，共享 3 条命，在无尽敌机中合作得分。
+> Bros who fly together, fight together!
 
-当前仓库实现的是 **第一个可玩 thin slice**：在线双人连接、移动、自动开火、一种直线敌人、共享生命、计分、game over 和双方准备后重开。Boss、武器升级、完整波次和音乐属于后续 v1.0。
+FighterJet is a browser-based, portrait (9:16) online co-op shoot 'em up for two players. Each player controls a jet from their own computer or phone, joining a single match run by an authoritative server. The two players share 3 lives and work together to score points against an endless stream of enemies.
 
-## 当前功能
+This repository currently implements the **first playable thin slice**: online two-player connection, movement, auto-fire, one straight-flying enemy type, shared lives, scoring, game over, and a ready-up restart. Bosses, weapon upgrades, full waves, and music are planned for v1.0.
 
-- 全局唯一对局，最多 2 名玩家；第三人会看到“对局已满”。
-- 必须 2 人才能开始；第二人加入后 3 秒倒计时。
-- 权威服务器：客户端发送输入，服务器以 60Hz 固定时间步运行 simulation，30Hz 下发快照。
-- 共享 3 条命：死亡扣 1 条，3 秒后重生并带 2 秒无敌；两人都死亡时各扣 1 条。
-- 无友军伤害，玩家之间不碰撞。
-- 自动开火；桌面 WASD / 方向键，手机拖拽，飞机显示在手指上方约 40px。
-- 一种直线敌人、连续生成、分数、服务器内存 Top 10。
-- 断线或切后台时暂停对局，保留 30 秒重连窗口；使用浏览器保存的 session token 恢复。
-- game over 后双方各自准备，两人都准备好后 3 秒倒计时重开。
-- 像素风 Canvas 渲染；6 类程序化音效（当前 thin slice 使用其中 4 类）。
-- 单 Node 服务同源托管构建后的客户端和 WebSocket。
+## Current features
 
-## 尚未实现（v1.0）
+- A single global match with at most 2 players; a third player sees a "match full" message.
+- The match needs 2 players to start; a 3-second countdown begins once the second player joins.
+- Authoritative server: clients send input, and the server runs the simulation on a 60Hz fixed timestep and broadcasts snapshots at 30Hz.
+- 3 shared lives: each death costs 1 life, and the player respawns after 3 seconds with 2 seconds of invincibility. If both players die, each death costs a life.
+- No friendly fire and no collisions between players.
+- Auto-fire. Desktop uses WASD / arrow keys; mobile uses drag, with the jet drawn about 40px above the finger.
+- One straight-flying enemy type, continuous spawning, scoring, and an in-memory Top 10 on the server.
+- The match pauses on disconnect or when the app goes to the background, with a 30-second reconnect window. Reconnection uses a session token stored in the browser.
+- After game over, each player readies up separately; once both are ready, a 3-second countdown restarts the match.
+- Pixel-art Canvas rendering; 6 procedurally generated sound effects (4 are used in the current thin slice).
+- A single Node service serves both the built client and the WebSocket on the same origin.
 
-- 3 种敌人：Zigzag、Shooter。
-- 每波约 20–30 秒的完整波次系统，第 5/10/15 波 Boss。
-- 三阶段 Boss 和 Boss 弹幕。
-- 武器升级道具与 3 级武器。
-- 音乐、更多音效和更完整的画面反馈。
-- 数据库排行榜、账号、房间/匹配、中途加入、动态难度、客户端预测。
+## Not yet implemented (v1.0)
 
-## 技术栈
+- Two more enemy types, Zigzag and Shooter, for 3 in total.
+- A full wave system (about 20–30 seconds per wave), with bosses on waves 5, 10, and 15.
+- Three-phase bosses with bullet patterns.
+- Weapon upgrade pickups and 3 weapon levels.
+- Music, more sound effects, and richer visual feedback.
+- Database-backed leaderboard, accounts, rooms/matchmaking, joining mid-match, dynamic difficulty, client-side prediction.
 
-- 客户端：React 19 + TypeScript + Canvas 2D，Vite。
-- 服务器：Node.js + TypeScript + `ws`。
-- 共享：`shared/` 放常量、消息协议、类型和固定时间步 simulation。
-- 工作区：npm workspaces（`client/`、`server/`、`shared/`）。
-- 测试：Vitest（共享逻辑 + 双 WebSocket 客户端服务器集成测试）。
+## Tech stack
 
-## 目录结构
+- Client: React 19 + TypeScript + Canvas 2D, built with Vite.
+- Server: Node.js + TypeScript + `ws`.
+- Shared: `shared/` holds constants, the message protocol, types, and the fixed-timestep simulation.
+- Workspace: npm workspaces (`client/`, `server/`, `shared/`).
+- Tests: Vitest (shared logic unit tests + a server integration test with two WebSocket clients).
+
+## Project structure
 
 ```text
 FighterJet/
-├── client/          # React UI + Canvas 渲染 + WebSocket 客户端
-│   └── src/game/    # 输入、插值、渲染、音频、连接
-├── server/          # Node HTTP + WebSocket 权威服务器
-│   └── src/room.ts  # 全局对局、重连、暂停、Top 10
-├── shared/          # 协议、类型、常量、simulation、单元测试
-└── package.json     # npm workspaces 与统一脚本
+├── client/          # React UI + Canvas rendering + WebSocket client
+│   └── src/game/    # input, interpolation, rendering, audio, connection
+├── server/          # Node HTTP + WebSocket authoritative server
+│   └── src/room.ts  # global match, reconnects, pausing, Top 10
+├── shared/          # protocol, types, constants, simulation, unit tests
+└── package.json     # npm workspaces and shared scripts
 ```
 
-## 本地运行
+## Running locally
 
-要求：Node.js 24+（当前在 Node 24.19 上验证）和 npm。
+Requirements: Node.js 24+ (verified on Node 24.19) and npm.
 
 ```sh
 npm install
 npm run dev
 ```
 
-打开 <http://localhost:5173>。再开一个浏览器标签页或另一台同局域网设备访问同一个地址，第二人加入后自动开始倒计时。
+Open <http://localhost:5173>. Open the same address in a second browser tab or on another device on the same LAN; the countdown starts automatically once the second player joins.
 
-开发时 Vite 运行在 5173，Node/WebSocket 运行在 3001；Vite 会把 `/ws` 代理到服务器。
+In development, Vite runs on port 5173 and the Node/WebSocket server runs on 3001; Vite proxies `/ws` to the server.
 
-### 局域网 / 手机测试
+### LAN / mobile testing
 
-`npm run dev` 已启用 Vite 的 `host: true`。手机与电脑在同一网络时，访问电脑的局域网 IP（例如 `http://192.168.1.10:5173`）即可。手机端会自动尝试请求全屏和竖屏锁定，浏览器不支持时会静默失败。
+`npm run dev` enables Vite's `host: true`. With your phone and computer on the same network, open the computer's LAN IP (for example `http://192.168.1.10:5173`). On mobile, the game automatically tries to request fullscreen and lock portrait orientation, and fails silently if the browser doesn't support it.
 
-## 生产构建
+## Production build
 
 ```sh
 npm run build
 npm start
 ```
 
-打开 <http://localhost:3001>。生产环境由同一个 Node 服务托管 `client/dist` 和 `/ws`，不需要额外配置 CORS。
+Open <http://localhost:3001>. In production, a single Node service serves both `client/dist` and `/ws`, so no CORS configuration is needed.
 
-## 脚本
+## Scripts
 
-| 命令 | 作用 |
+| Command | Description |
 |---|---|
-| `npm run dev` | 同时启动 Vite 客户端和 Node 服务器 |
-| `npm run dev:client` | 只启动 Vite 客户端 |
-| `npm run dev:server` | 只启动 Node 服务器（tsx watch） |
-| `npm run build` | 构建客户端到 `client/dist` |
-| `npm start` | 启动生产服务器 |
-| `npm test` | 运行 shared 单元测试和 server 集成测试 |
-| `npm run typecheck` | 对三个 workspace 做 TypeScript 检查 |
+| `npm run dev` | Start the Vite client and the Node server together |
+| `npm run dev:client` | Start only the Vite client |
+| `npm run dev:server` | Start only the Node server (tsx watch) |
+| `npm run build` | Build the client into `client/dist` |
+| `npm start` | Start the production server |
+| `npm test` | Run the shared unit tests and the server integration tests |
+| `npm run typecheck` | Type-check all three workspaces |
 
-## 操作
+## Controls
 
-- 桌面：WASD 或方向键移动；自动开火。
-- 手机：在游戏画面上拖拽移动；自动开火；飞机在手指上方约 40px。
-- 无需手动射击或暂停。断线/切后台会自动暂停并尝试重连。
+- Desktop: move with WASD or arrow keys; firing is automatic.
+- Mobile: drag on the game screen to move; firing is automatic; the jet sits about 40px above your finger.
+- There is no manual fire or pause button. Disconnecting or backgrounding the app pauses the match automatically and tries to reconnect.
 
-## 已知限制
+## Known limitations
 
-- 当前是全局唯一对局：同一时间只能有一组两人在玩。
-- Top 10 存在服务器内存，重启后清空；没有账号和持久化。
-- 断线重连依赖浏览器保存的 session token；清除存储后无法恢复原座位。
-- 当前 thin slice 仍使用连续生成敌人，不是完整波次/Boss 系统。
-- 自动化测试通过；**尚未在真实浏览器或手机上完成双设备 playtest**，手感和移动端适配仍需实际测试。
-- 无账号系统，适合朋友之间的小范围对局。
+- There is only one global match, so only one pair of players can play at a time.
+- The Top 10 lives in server memory and is cleared on restart; there are no accounts and no persistence.
+- Reconnecting relies on the session token stored in the browser; after clearing storage you can't reclaim your seat.
+- The current thin slice still spawns enemies continuously rather than using the full wave/boss system.
+- Automated tests pass, but **a two-device playtest on real browsers or phones has not been done yet**; game feel and mobile layout still need real-world testing.
+- No account system; it's meant for small games among friends.
 
 ## License
 
